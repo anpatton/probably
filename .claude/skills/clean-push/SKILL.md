@@ -1,6 +1,6 @@
 ---
 name: clean-push
-description: Run tests, lint, and formatting, then confirm branch and commit details before pushing to GitHub. Accepts an optional --pr flag to also open and merge a PR into main. Use when the user asks to "clean push", "push cleanly", or wants a verified push of the probably package.
+description: Run tests, lint, and formatting, then confirm branch and commit details before pushing to GitHub. Accepts an optional --pr flag to also open a PR into main (not merged). Use when the user asks to "clean push", "push cleanly", or wants a verified push of the probably package.
 ---
 
 # clean-push
@@ -13,8 +13,8 @@ All commands run inside the `probably` conda environment (`conda activate probab
 ## Arguments
 
 - `--pr` (optional, **default false**): when passed, after the push also open a PR
-  into `main` and merge it. When absent, the skill only pushes the current branch —
-  no PR is opened.
+  into `main`. The PR is not merged. When absent, the skill only pushes the current
+  branch — no PR is opened.
 
 ## Steps
 
@@ -48,13 +48,8 @@ All commands run inside the `probably` conda environment (`conda activate probab
 
 5. **If `--pr` was passed:** after the push succeeds, open a PR from the current
    branch into `main` (`gh pr create`), using the confirmed commit message (or a
-   short summary of it) as the PR title/body. Before merging:
-   - Show the user the PR URL, title, and body.
-   - Explicitly confirm they want it merged into `main` now — this is a separate
-     confirmation from step 3's push confirmation, since merging to `main` is a
-     more consequential, harder-to-reverse action.
-   - Only after that confirmation, merge it (`gh pr merge`). Do not use
-     `--admin`/force-merge past failing required checks.
+   short summary of it) as the PR title/body. Show the user the PR URL, title, and
+   body. Do not merge it — merging is left to the user.
    - If the current branch already *is* `main`, skip PR creation entirely — there's
      nothing to open a PR against — and tell the user so.
 
