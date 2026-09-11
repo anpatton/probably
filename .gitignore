@@ -1,3 +1,10 @@
+# macOS
+.DS_Store
+
+# Quarto render output
+README.html
+README_files/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
