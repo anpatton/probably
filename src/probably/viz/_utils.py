@@ -1,12 +1,15 @@
 """Shared helpers for the viz subpackage."""
 
+import math
 from collections.abc import Mapping
 from typing import Any
 
 import numpy as np
 from matplotlib.axes import Axes
+from matplotlib.axis import Axis
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.legend import Legend
+from matplotlib.ticker import FixedFormatter, FixedLocator, FuncFormatter
 from numpy.typing import NDArray
 
 # Warm parchment ground, dark ink, and a muted rule color -- the base of the
@@ -66,10 +69,108 @@ def apply_simple_style(axes: Axes) -> None:
     axes.spines["bottom"].set_color(MUTED_COLOR)
     axes.tick_params(color=MUTED_COLOR, labelcolor=MUTED_COLOR)
 
+    _format_axis_ticks(axes.xaxis)
+    _format_axis_ticks(axes.yaxis)
+
     # Set on the persistent label objects so a later set_xlabel/set_title keeps them.
     axes.xaxis.label.set_color(INK_COLOR)
     axes.yaxis.label.set_color(INK_COLOR)
     axes.title.set_color(INK_COLOR)
+
+
+SIGNIFICANT_DIGITS = 3
+
+# Largest first, so the biggest applicable suffix wins.
+_SUFFIXES = ((1e12, "T"), (1e9, "B"), (1e6, "M"), (1e3, "k"))
+
+
+def _strip_trailing_zeros(text: str) -> str:
+    if "." in text:
+        text = text.rstrip("0").rstrip(".")
+    return text or "0"
+
+
+def format_number(value: Any, digits: int = SIGNIFICANT_DIGITS) -> str:
+    """Round a number for display: few digits, no noise, nothing misleading.
+
+    Rounds to ``digits`` significant figures and drops trailing zeros, but
+    leaves an exact integer exact -- rounding a count to 3 figures would
+    turn 1765 into 1770, which is wrong for something that was counted.
+    Magnitudes too small or large to write plainly fall back to scientific
+    notation.
+
+    Examples
+    --------
+    >>> [format_number(v) for v in (3.7580001, 0.03374892, 1765.4321)]
+    ['3.76', '0.0337', '1770']
+    >>> [format_number(v) for v in (150.0, 0.0, -1.396)]
+    ['150', '0', '-1.4']
+    >>> format_number(0.00004821)
+    '4.82e-05'
+    """
+    if value is None:
+        return "n/a"
+    number = float(value)
+    if not math.isfinite(number):
+        return "n/a"
+    if number == 0:
+        return "0"
+    if number.is_integer() and abs(number) < 1e15:
+        return str(int(number))
+
+    magnitude = abs(number)
+    if magnitude >= 1e15 or magnitude < 1e-4:
+        mantissa, exponent_text = f"{number:.{digits - 1}e}".split("e")
+        return f"{_strip_trailing_zeros(mantissa)}e{exponent_text}"
+
+    exponent = math.floor(math.log10(magnitude))
+    # Negative places round above the decimal point (1765.4 -> 1770), which is
+    # what makes this significant figures rather than decimal places. Only the
+    # display width is clamped at zero.
+    places = -(exponent - digits + 1)
+    return _strip_trailing_zeros(f"{round(number, places):.{max(0, places)}f}")
+
+
+def format_tick(value: float, _position: Any = None) -> str:
+    """Format an axis tick, abbreviating large numbers as 1.2k / 3.4M / 1.1B.
+
+    Formatting every tick in full also drops matplotlib's shared "1e6" offset
+    label, which otherwise floats in the corner of the axes.
+
+    Examples
+    --------
+    >>> [format_tick(v) for v in (0, 2500, 1_200_000, 0.25)]
+    ['0', '2.5k', '1.2M', '0.25']
+    """
+    if not math.isfinite(value):
+        return ""
+    if value == 0:
+        return "0"
+
+    magnitude = abs(value)
+    for threshold, suffix in _SUFFIXES:
+        if magnitude >= threshold:
+            return format_number(value / threshold) + suffix
+    return format_number(value)
+
+
+def _format_axis_ticks(axis: Axis) -> None:
+    """Apply the tick formatter, unless the axis carries caller-set labels.
+
+    A FixedLocator means the ticks were pinned by hand (``set_xticks``), and
+    categorical units mean matplotlib is labelling strings. In both cases the
+    labels are text, not numbers, and formatting them would replace them with
+    their underlying positions. Note that ``set_xticklabels`` installs a
+    FuncFormatter rather than a FixedFormatter, so the locator -- not the
+    formatter -- is the dependable signal.
+    """
+    if isinstance(axis.get_major_locator(), FixedLocator):
+        return
+    if isinstance(axis.get_major_formatter(), FixedFormatter):
+        return
+    if axis.units is not None:
+        return
+    axis.set_major_formatter(FuncFormatter(format_tick))
 
 
 def apply_legend_style(legend: Legend) -> None:

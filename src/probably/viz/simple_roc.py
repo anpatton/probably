@@ -22,6 +22,15 @@ from probably.viz._utils import (
 _REFERENCE_COLOR = "black"
 
 
+def _format_auc(auc: float) -> str:
+    """AUC always carries its decimals, so a perfect score reads 1.000, not 1.
+
+    This is the one number the package does not round smartly: it is bounded
+    on [0, 1], and a column of AUCs is easier to compare at a fixed width.
+    """
+    return f"{auc:.3f}"
+
+
 def _roc_series(
     y_true: Any, y_score: Any
 ) -> list[tuple[str | None, NDArray[Any], NDArray[np.floating[Any]], Any]]:
@@ -112,10 +121,10 @@ def simple_roc(
         if label is None:
             # A lone curve has no legend, so its AUC goes in the caption.
             color = CHART_COLOR
-            caption = f"AUC = {auc:.3f} · {caption}"
+            caption = f"AUC = {_format_auc(auc)} · {caption}"
         else:
             color = CATEGORICAL_COLORS[index % len(CATEGORICAL_COLORS)]
-            label = f"{label} (AUC = {auc:.3f})"
+            label = f"{label} (AUC = {_format_auc(auc)})"
 
         axes.plot(
             false_positive_rate,
