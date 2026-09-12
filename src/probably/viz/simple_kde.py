@@ -1,5 +1,6 @@
 """Simple 1-D kernel density estimate plot."""
 
+from pathlib import Path
 from typing import Any
 
 import matplotlib.pyplot as plt
@@ -13,7 +14,9 @@ from probably.viz._utils import (
     CHART_COLOR,
     apply_legend_style,
     apply_simple_style,
+    check_image_path,
     coerce_to_series,
+    save_figure,
 )
 
 _GRID_POINTS = 200
@@ -36,6 +39,7 @@ def simple_kde(
     x: Any,
     xlabel: str | None = None,
     title: str | None = None,
+    filepath: str | Path | None = None,
 ) -> Axes:
     """Plot a 1-D kernel density estimate.
 
@@ -53,6 +57,9 @@ def simple_kde(
         Label for the x-axis.
     title : str, optional
         Plot title.
+    filepath : str or pathlib.Path, optional
+        Write the figure to this path. Must end in ``.png``, ``.jpg``, or
+        ``.jpeg``. The axes are returned either way.
 
     Returns
     -------
@@ -66,6 +73,7 @@ def simple_kde(
     >>> axes = simple_kde(rng.normal(size=200))
     >>> grouped = simple_kde({"a": rng.normal(size=50), "b": rng.normal(3, 1, 80)})
     """
+    path = check_image_path(filepath)
     series = coerce_to_series(x)
 
     # One grid across every series, so overlapping curves stay comparable.
@@ -94,5 +102,7 @@ def simple_kde(
         axes.set_xlabel(xlabel)
     if title is not None:
         axes.set_title(title)
+
+    save_figure(axes, path)
 
     return axes

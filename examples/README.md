@@ -20,8 +20,6 @@
   overlaid against a second model.
 - [`viz/simple_2x2.py`](viz/simple_2x2.py) — plots the confusion matrix for that same
   classifier with `probably.viz.simple_2x2`.
-- [`viz/simple_table.py`](viz/simple_table.py) — tabulates iris petal length with
-  `probably.viz.simple_table`, at both depths.
 
 This directory otherwise holds one runnable example per public function/class in `probably`.
 

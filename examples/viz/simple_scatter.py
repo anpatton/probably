@@ -20,6 +20,9 @@ petal_length = [float(row["petal_length"]) for row in rows]
 petal_width = [float(row["petal_width"]) for row in rows]
 species = [row["species"] for row in rows]
 
+output_path = Path(__file__).parent.parent / "assets" / "simple_scatter.png"
+output_path.parent.mkdir(parents=True, exist_ok=True)
+
 axes = simple_scatter(
     petal_length,
     petal_width,
@@ -28,9 +31,7 @@ axes = simple_scatter(
     xlabel="Petal Length (cm)",
     ylabel="Petal Width (cm)",
     title="Iris petal dimensions",
+    filepath=output_path,
 )
 
-output_path = Path(__file__).parent.parent / "assets" / "simple_scatter.png"
-output_path.parent.mkdir(parents=True, exist_ok=True)
-axes.figure.savefig(output_path, bbox_inches="tight")
 print(f"wrote {output_path}")

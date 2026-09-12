@@ -46,8 +46,8 @@ axes = simple_roc(
     y_test,
     logistic.predict_proba(x_test)[:, 1],
     title="Virginica vs. rest",
+    filepath=assets / "simple_roc.png",
 )
-axes.figure.savefig(assets / "simple_roc.png", bbox_inches="tight")
 print(f"wrote {assets / 'simple_roc.png'}")
 
 # A second model on its own, different split -- each pair brings its own labels.
@@ -66,6 +66,6 @@ compared_axes = simple_roc(
         ),
     },
     title="Virginica vs. rest, by model",
+    filepath=assets / "simple_roc_compared.png",
 )
-compared_axes.figure.savefig(assets / "simple_roc_compared.png", bbox_inches="tight")
 print(f"wrote {assets / 'simple_roc_compared.png'}")

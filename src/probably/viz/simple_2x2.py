@@ -1,5 +1,6 @@
 """Simple 2x2 confusion matrix."""
 
+from pathlib import Path
 from typing import Any
 
 import matplotlib.pyplot as plt
@@ -11,8 +12,10 @@ from probably.viz._utils import (
     INK_COLOR,
     MUTED_COLOR,
     apply_simple_style,
+    check_image_path,
     coerce_binary_labels,
     coerce_to_1d_list,
+    save_figure,
 )
 
 # A shade deeper than the parchment ground so the cells read as cells.
@@ -29,6 +32,7 @@ def simple_2x2(
     y_true: Any,
     y_pred: Any,
     title: str | None = None,
+    filepath: str | Path | None = None,
 ) -> Axes:
     """Plot a 2x2 confusion matrix for a binary classifier.
 
@@ -46,6 +50,9 @@ def simple_2x2(
         classes and the same length as ``y_true``.
     title : str, optional
         Plot title.
+    filepath : str or pathlib.Path, optional
+        Write the figure to this path. Must end in ``.png``, ``.jpg``, or
+        ``.jpeg``. The axes are returned either way.
 
     Returns
     -------
@@ -56,6 +63,7 @@ def simple_2x2(
     --------
     >>> axes = simple_2x2([0, 0, 1, 1], [0, 1, 1, 1])
     """
+    path = check_image_path(filepath)
     labels, negative_label, positive_label = coerce_binary_labels(y_true, name="y_true")
     predictions = np.asarray(coerce_to_1d_list(y_pred, name="y_pred"))
     if labels.shape != predictions.shape:
@@ -132,5 +140,7 @@ def simple_2x2(
 
     if title is not None:
         axes.set_title(title)
+
+    save_figure(axes, path)
 
     return axes

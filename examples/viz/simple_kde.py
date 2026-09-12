@@ -30,8 +30,12 @@ assets = Path(__file__).parent.parent / "assets"
 assets.mkdir(parents=True, exist_ok=True)
 
 # Pooled across every species.
-axes = simple_kde(petal_lengths, xlabel="Petal Length (cm)", title="Iris petal length density")
-axes.figure.savefig(assets / "simple_kde.png", bbox_inches="tight")
+axes = simple_kde(
+    petal_lengths,
+    xlabel="Petal Length (cm)",
+    title="Iris petal length density",
+    filepath=assets / "simple_kde.png",
+)
 print(f"wrote {assets / 'simple_kde.png'}")
 
 # One overlapping curve per species.
@@ -39,6 +43,6 @@ grouped_axes = simple_kde(
     by_species,
     xlabel="Petal Length (cm)",
     title="Iris petal length density by species",
+    filepath=assets / "simple_kde_grouped.png",
 )
-grouped_axes.figure.savefig(assets / "simple_kde_grouped.png", bbox_inches="tight")
 print(f"wrote {assets / 'simple_kde_grouped.png'}")

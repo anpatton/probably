@@ -16,14 +16,15 @@ data_path = Path(__file__).parent.parent / "data" / "iris.csv"
 with data_path.open(newline="") as f:
     petal_lengths = [float(row["petal_length"]) for row in csv.DictReader(f)]
 
+output_path = Path(__file__).parent.parent / "assets" / "simple_histogram.png"
+output_path.parent.mkdir(parents=True, exist_ok=True)
+
 axes = simple_histogram(
     petal_lengths,
     bins=20,
     xlabel="Petal Length (cm)",
     title="Iris petal length",
+    filepath=output_path,
 )
 
-output_path = Path(__file__).parent.parent / "assets" / "simple_histogram.png"
-output_path.parent.mkdir(parents=True, exist_ok=True)
-axes.figure.savefig(output_path, bbox_inches="tight")
 print(f"wrote {output_path}")

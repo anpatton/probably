@@ -1,13 +1,20 @@
 """Simple 2-D kernel density estimate plot."""
 
-from typing import Any
+from pathlib import Path
+from typing import Any, Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from scipy.stats import gaussian_kde
 
-from probably.viz._utils import DENSITY_COLORMAP, apply_simple_style, coerce_to_1d_array
+from probably.viz._utils import (
+    apply_simple_style,
+    check_image_path,
+    coerce_to_1d_array,
+    resolve_density_colormap,
+    save_figure,
+)
 
 _GRID_SIZE = 100
 
@@ -18,6 +25,8 @@ def simple_kde_2d(
     xlabel: str | None = None,
     ylabel: str | None = None,
     title: str | None = None,
+    color: Literal["r", "y", "b"] = "y",
+    filepath: str | Path | None = None,
 ) -> Axes:
     """Plot a 2-D kernel density estimate of two vectors.
 
@@ -32,6 +41,13 @@ def simple_kde_2d(
         Label for the y-axis.
     title : str, optional
         Plot title.
+    color : {"r", "y", "b"}, default "y"
+        Hue of the density ramp, drawn from the package palette: rust,
+        mustard, or petrol teal. Single-series charts each default to a
+        different one.
+    filepath : str or pathlib.Path, optional
+        Write the figure to this path. Must end in ``.png``, ``.jpg``, or
+        ``.jpeg``. The axes are returned either way.
 
     Returns
     -------
@@ -44,6 +60,8 @@ def simple_kde_2d(
     >>> rng = np.random.default_rng(0)
     >>> axes = simple_kde_2d(rng.normal(size=200), rng.normal(size=200))
     """
+    path = check_image_path(filepath)
+    colormap = resolve_density_colormap(color)
     x_values = coerce_to_1d_array(x, name="x")
     y_values = coerce_to_1d_array(y, name="y")
     if x_values.shape != y_values.shape:
@@ -60,7 +78,7 @@ def simple_kde_2d(
 
     _, axes = plt.subplots()
 
-    axes.contourf(x_grid, y_grid, density, cmap=DENSITY_COLORMAP)
+    axes.contourf(x_grid, y_grid, density, cmap=colormap)
     apply_simple_style(axes)
 
     if xlabel is not None:
@@ -69,5 +87,7 @@ def simple_kde_2d(
         axes.set_ylabel(ylabel)
     if title is not None:
         axes.set_title(title)
+
+    save_figure(axes, path)
 
     return axes

@@ -1,5 +1,6 @@
 """Simple scatter plot."""
 
+from pathlib import Path
 from typing import Any, Literal
 
 import matplotlib.pyplot as plt
@@ -16,8 +17,10 @@ from probably.viz._utils import (
     SEQUENTIAL_COLORMAP,
     apply_legend_style,
     apply_simple_style,
+    check_image_path,
     coerce_to_1d_array,
     coerce_to_1d_list,
+    save_figure,
 )
 
 _LINE_COLOR = "black"
@@ -123,6 +126,7 @@ def simple_scatter(
     xlabel: str | None = None,
     ylabel: str | None = None,
     title: str | None = None,
+    filepath: str | Path | None = None,
 ) -> Axes:
     """Plot a scatter of two vectors.
 
@@ -146,6 +150,9 @@ def simple_scatter(
         Label for the y-axis.
     title : str, optional
         Plot title.
+    filepath : str or pathlib.Path, optional
+        Write the figure to this path. Must end in ``.png``, ``.jpg``, or
+        ``.jpeg``. The axes are returned either way.
 
     Returns
     -------
@@ -158,6 +165,7 @@ def simple_scatter(
     >>> rng = np.random.default_rng(0)
     >>> axes = simple_scatter(rng.normal(size=50), rng.normal(size=50), line="lm")
     """
+    path = check_image_path(filepath)
     x_values = coerce_to_1d_array(x, name="x")
     y_values = coerce_to_1d_array(y, name="y")
     if x_values.shape != y_values.shape:
@@ -200,5 +208,7 @@ def simple_scatter(
         axes.set_ylabel(ylabel)
     if title is not None:
         axes.set_title(title)
+
+    save_figure(axes, path)
 
     return axes

@@ -2,12 +2,14 @@
 
 import math
 from collections.abc import Mapping
-from typing import Any
+from pathlib import Path
+from typing import Any, cast
 
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.axis import Axis
 from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.figure import Figure
 from matplotlib.legend import Legend
 from matplotlib.ticker import FixedFormatter, FixedLocator, FuncFormatter
 from numpy.typing import NDArray
@@ -42,12 +44,6 @@ SEQUENTIAL_COLORMAP = LinearSegmentedColormap.from_list(
     "probably_retro", ["#E9C9A3", CHART_COLOR, "#4A2416"]
 )
 
-# The same ramp for filled densities, but starting at the parchment ground so
-# empty regions dissolve into the page instead of painting it a flat tan.
-DENSITY_COLORMAP = LinearSegmentedColormap.from_list(
-    "probably_retro_density", [BACKGROUND_COLOR, CHART_COLOR, "#4A2416"]
-)
-
 
 def apply_simple_style(axes: Axes) -> None:
     """Apply the shared, lightly retro look used by every ``simple_*`` chart.
@@ -76,6 +72,88 @@ def apply_simple_style(axes: Axes) -> None:
     axes.xaxis.label.set_color(INK_COLOR)
     axes.yaxis.label.set_color(INK_COLOR)
     axes.title.set_color(INK_COLOR)
+
+
+# The r/y/b flag offered by single-series charts, mapped to the first three
+# palette slots by hue rather than by index.
+SERIES_COLORS = {
+    "r": CATEGORICAL_COLORS[0],  # rust
+    "b": CATEGORICAL_COLORS[1],  # petrol teal
+    "y": CATEGORICAL_COLORS[2],  # mustard
+}
+
+
+def resolve_color(color: str) -> str:
+    """Turn an r/y/b flag into a palette color.
+
+    Examples
+    --------
+    >>> resolve_color("r") == CATEGORICAL_COLORS[0]
+    True
+    """
+    if color not in SERIES_COLORS:
+        raise ValueError(f"color must be one of {sorted(SERIES_COLORS)}, got {color!r}")
+    return SERIES_COLORS[color]
+
+
+# The same hues as filled density ramps. Each starts at the parchment ground so
+# empty regions dissolve into the page instead of painting it a flat wash.
+_DENSITY_DARK_ENDS = {"r": "#4A2416", "b": "#12303A", "y": "#5A3E12"}
+
+DENSITY_COLORMAPS = {
+    flag: LinearSegmentedColormap.from_list(
+        f"probably_retro_density_{flag}",
+        [BACKGROUND_COLOR, SERIES_COLORS[flag], dark_end],
+    )
+    for flag, dark_end in _DENSITY_DARK_ENDS.items()
+}
+
+
+def resolve_density_colormap(color: str) -> LinearSegmentedColormap:
+    """Turn an r/y/b flag into a filled-density ramp in that hue.
+
+    Examples
+    --------
+    >>> resolve_density_colormap("y").name
+    'probably_retro_density_y'
+    """
+    if color not in DENSITY_COLORMAPS:
+        raise ValueError(f"color must be one of {sorted(DENSITY_COLORMAPS)}, got {color!r}")
+    return DENSITY_COLORMAPS[color]
+
+
+IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg")
+
+
+def check_image_path(filepath: Any) -> Path | None:
+    """Validate a ``filepath`` before a chart is built, so a typo fails fast.
+
+    Examples
+    --------
+    >>> check_image_path(None) is None
+    True
+    >>> check_image_path("chart.png").name
+    'chart.png'
+    """
+    if filepath is None:
+        return None
+    path = Path(filepath)
+    if path.suffix.lower() not in IMAGE_SUFFIXES:
+        raise ValueError(
+            f"filepath must end in one of {', '.join(IMAGE_SUFFIXES)}, got {path.name!r}"
+        )
+    return path
+
+
+def save_figure(axes: Axes, path: Path | None) -> None:
+    """Write the chart to `path`, if one was given."""
+    if path is None:
+        return
+    # root=True resolves to the top-level Figure; plain .figure may be a
+    # SubFigure, which cannot be saved. Every simple_* chart builds its own
+    # figure, so this is never None -- the cast just says so to the checker.
+    figure = cast(Figure, axes.get_figure(root=True))
+    figure.savefig(path, bbox_inches="tight")
 
 
 SIGNIFICANT_DIGITS = 3

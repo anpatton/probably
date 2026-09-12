@@ -19,11 +19,15 @@ with data_path.open(newline="") as f:
 
 counts = Counter(species)
 
-axes = simple_bar(
-    list(counts.keys()), list(counts.values()), xlabel="Count", title="Iris species counts"
-)
-
 output_path = Path(__file__).parent.parent / "assets" / "simple_bar.png"
 output_path.parent.mkdir(parents=True, exist_ok=True)
-axes.figure.savefig(output_path, bbox_inches="tight")
+
+axes = simple_bar(
+    list(counts.keys()),
+    list(counts.values()),
+    xlabel="Count",
+    title="Iris species counts",
+    filepath=output_path,
+)
+
 print(f"wrote {output_path}")

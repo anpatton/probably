@@ -34,9 +34,9 @@ x_train, x_test, y_train, y_test = train_test_split(
 model = LogisticRegression(max_iter=1000).fit(x_train, y_train)
 predictions = model.predict(x_test)
 
-axes = simple_2x2(y_test, predictions, title="Virginica vs. rest")
-
 output_path = Path(__file__).parent.parent / "assets" / "simple_2x2.png"
 output_path.parent.mkdir(parents=True, exist_ok=True)
-axes.figure.savefig(output_path, bbox_inches="tight")
+
+axes = simple_2x2(y_test, predictions, title="Virginica vs. rest", filepath=output_path)
+
 print(f"wrote {output_path}")

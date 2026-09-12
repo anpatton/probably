@@ -1,5 +1,6 @@
 """Simple ROC curve plot."""
 
+from pathlib import Path
 from typing import Any
 
 import matplotlib.pyplot as plt
@@ -14,8 +15,10 @@ from probably.viz._utils import (
     INK_COLOR,
     apply_legend_style,
     apply_simple_style,
+    check_image_path,
     coerce_binary_labels,
     coerce_to_1d_array,
+    save_figure,
     split_labelled_items,
 )
 
@@ -71,6 +74,7 @@ def simple_roc(
     y_true: Any,
     y_score: Any = None,
     title: str | None = None,
+    filepath: str | Path | None = None,
 ) -> Axes:
     """Plot a ROC curve for one or more binary classifiers.
 
@@ -89,6 +93,9 @@ def simple_roc(
         length as ``y_true``. Omitted when passing pairs.
     title : str, optional
         Plot title.
+    filepath : str or pathlib.Path, optional
+        Write the figure to this path. Must end in ``.png``, ``.jpg``, or
+        ``.jpeg``. The axes are returned either way.
 
     Returns
     -------
@@ -105,6 +112,7 @@ def simple_roc(
     ...     }
     ... )
     """
+    path = check_image_path(filepath)
     series = _roc_series(y_true, y_score)
 
     _, axes = plt.subplots()
@@ -156,5 +164,7 @@ def simple_roc(
 
     if title is not None:
         axes.set_title(title)
+
+    save_figure(axes, path)
 
     return axes
