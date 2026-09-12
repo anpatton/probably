@@ -1,0 +1,84 @@
+"""Simple horizontal bar chart."""
+
+from pathlib import Path
+from typing import Any, Literal
+
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.axes import Axes
+
+from probably.viz._utils import (
+    apply_simple_style,
+    check_image_path,
+    coerce_to_1d_array,
+    coerce_to_1d_list,
+    resolve_color,
+    save_figure,
+)
+
+
+def simple_bar(
+    categories: Any,
+    values: Any,
+    xlabel: str | None = None,
+    title: str | None = None,
+    color: Literal["r", "y", "b"] = "b",
+    filepath: str | Path | None = None,
+) -> Axes:
+    """Plot a horizontal bar chart of category values.
+
+    Bars are horizontal (rather than vertical) so they are never confused
+    with a histogram, and are sorted with the largest value at the top.
+
+    Parameters
+    ----------
+    categories : array-like
+        A single vector of category labels.
+    values : array-like
+        A single vector of values, one per category.
+    xlabel : str, optional
+        Label for the x-axis (the value axis).
+    title : str, optional
+        Plot title.
+    color : {"r", "y", "b"}, default "b"
+        Bar color, drawn from the package palette: rust, mustard, or petrol
+        teal. Single-series charts each default to a different one.
+    filepath : str or pathlib.Path, optional
+        Write the figure to this path. Must end in ``.png``, ``.jpg``, or
+        ``.jpeg``. The axes are returned either way.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes the bar chart was drawn on.
+
+    Examples
+    --------
+    >>> axes = simple_bar(["a", "b", "c"], [3, 1, 2])
+    """
+    path = check_image_path(filepath)
+    category_labels = coerce_to_1d_list(categories, name="categories")
+    value_array = coerce_to_1d_array(values, name="values")
+    if len(category_labels) != len(value_array):
+        raise ValueError(
+            f"categories and values must be the same length, "
+            f"got {len(category_labels)} and {len(value_array)}"
+        )
+
+    order = np.argsort(value_array)
+    sorted_labels = [category_labels[i] for i in order]
+    sorted_values = value_array[order]
+
+    _, axes = plt.subplots()
+
+    axes.barh(sorted_labels, sorted_values, color=resolve_color(color))
+    apply_simple_style(axes)
+
+    if xlabel is not None:
+        axes.set_xlabel(xlabel)
+    if title is not None:
+        axes.set_title(title)
+
+    save_figure(axes, path)
+
+    return axes

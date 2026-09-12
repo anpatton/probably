@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="examples/assets/logo.png" alt="probably logo" width="160">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="examples/assets/logo-dark.png">
+    <img src="examples/assets/logo.png" alt="probably logo" width="320">
+  </picture>
 </p>
 
 # probably
@@ -44,6 +47,11 @@ class as they're added.
 - **Minimal dependencies** — built on `numpy`, `scipy`, and `scikit-learn`; new dependencies
   are added only when necessary.
 - **Documented by example** — every public function/class ships with a runnable example.
+- **`simple_*` functions favor simplicity over configuration** — the `simple_` prefix (e.g.
+  `probably.viz.simple_histogram`) marks functions designed with as few parameters as
+  possible, no configuration for its own sake, and a consistent, predictable signature
+  shape across every `simple_*` function — accept a plain vector input, take only the
+  handful of options a first-time user would expect, and return the plotted object.
 
 ## Development
 
