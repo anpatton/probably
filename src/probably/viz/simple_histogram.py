@@ -5,7 +5,12 @@ from typing import Any
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 
-from probably.viz._utils import CHART_COLOR, apply_simple_style, coerce_to_1d_array
+from probably.viz._utils import (
+    BACKGROUND_COLOR,
+    CHART_COLOR,
+    apply_simple_style,
+    coerce_to_1d_array,
+)
 
 
 def simple_histogram(
@@ -42,7 +47,7 @@ def simple_histogram(
 
     _, axes = plt.subplots()
 
-    axes.hist(values, bins=bins, color=CHART_COLOR, edgecolor="white")
+    axes.hist(values, bins=bins, color=CHART_COLOR, edgecolor=BACKGROUND_COLOR)
     apply_simple_style(axes)
 
     if xlabel is not None:

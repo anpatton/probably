@@ -25,8 +25,8 @@ axes = simple_scatter(
     petal_width,
     line="lm",
     color_by=species,
-    xlabel="petal length (cm)",
-    ylabel="petal width (cm)",
+    xlabel="Petal Length (cm)",
+    ylabel="Petal Width (cm)",
     title="Iris petal dimensions",
 )
 

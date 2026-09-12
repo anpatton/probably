@@ -20,7 +20,7 @@ with data_path.open(newline="") as f:
 counts = Counter(species)
 
 axes = simple_bar(
-    list(counts.keys()), list(counts.values()), xlabel="count", title="Iris species counts"
+    list(counts.keys()), list(counts.values()), xlabel="Count", title="Iris species counts"
 )
 
 output_path = Path(__file__).parent.parent / "assets" / "simple_bar.png"

@@ -8,9 +8,13 @@ from matplotlib.axes import Axes
 from numpy.typing import NDArray
 
 from probably.viz._utils import (
+    BACKGROUND_COLOR,
     CATEGORICAL_COLORS,
     CHART_COLOR,
+    INK_COLOR,
+    MUTED_COLOR,
     SEQUENTIAL_COLORMAP,
+    apply_legend_style,
     apply_simple_style,
     coerce_to_1d_array,
     coerce_to_1d_list,
@@ -81,9 +85,15 @@ def _scatter_colored_by(
 
     if numeric_values is not None:
         scatter = axes.scatter(
-            x_values, y_values, c=numeric_values, cmap=SEQUENTIAL_COLORMAP, edgecolor="white"
+            x_values,
+            y_values,
+            c=numeric_values,
+            cmap=SEQUENTIAL_COLORMAP,
+            edgecolor=BACKGROUND_COLOR,
         )
-        axes.figure.colorbar(scatter, ax=axes)
+        colorbar = axes.figure.colorbar(scatter, ax=axes)
+        colorbar.outline.set_edgecolor(MUTED_COLOR)
+        colorbar.ax.tick_params(color=MUTED_COLOR, labelcolor=MUTED_COLOR)
         return
 
     labels = coerce_to_1d_list(color_by, name="color_by")
@@ -98,10 +108,11 @@ def _scatter_colored_by(
             x_values[mask],
             y_values[mask],
             color=colors[category],
-            edgecolor="white",
+            edgecolor=BACKGROUND_COLOR,
             label=str(category),
         )
-    axes.legend()
+
+    apply_legend_style(axes.legend())
 
 
 def simple_scatter(
@@ -126,9 +137,9 @@ def simple_scatter(
         weighted smooth. The line type is noted in a caption below the plot.
     color_by : array-like, optional
         A vector, the same length as ``x`` and ``y``, used to color each
-        point. Categorical values are colored with RColorBrewer's Set1
-        palette (with a legend); numeric values are colored with a viridis
-        colormap (with a colorbar). The color scheme is not configurable.
+        point. Categorical values are colored with the package's muted
+        retro palette (with a legend); numeric values are colored with its
+        warm sequential ramp (with a colorbar). Colors are not configurable.
     xlabel : str, optional
         Label for the x-axis.
     ylabel : str, optional
@@ -164,14 +175,22 @@ def simple_scatter(
     _, axes = plt.subplots()
 
     if color_by is None:
-        axes.scatter(x_values, y_values, color=CHART_COLOR, edgecolor="white", alpha=0.85)
+        axes.scatter(x_values, y_values, color=CHART_COLOR, edgecolor=BACKGROUND_COLOR, alpha=0.85)
     else:
         _scatter_colored_by(axes, x_values, y_values, color_by)
 
     if line is not None:
         line_x, line_y = _LINE_FUNCS[line](x_values, y_values)
         axes.plot(line_x, line_y, color=_LINE_COLOR)
-        axes.figure.text(0.5, 0.0, _LINE_CAPTIONS[line], ha="center", va="bottom", fontsize=9)
+        axes.figure.text(
+            0.5,
+            0.0,
+            _LINE_CAPTIONS[line],
+            ha="center",
+            va="bottom",
+            fontsize=9,
+            color=INK_COLOR,
+        )
 
     apply_simple_style(axes)
 

@@ -51,7 +51,7 @@ def test_rejects_mismatched_color_by_length():
         simple_scatter([1, 2, 3], [1, 2, 3], color_by=["a", "b"])
 
 
-def test_color_by_categorical_uses_set1_and_legend():
+def test_color_by_categorical_uses_palette_and_legend():
     axes = simple_scatter([1, 2, 3, 4], [1, 2, 3, 4], color_by=["a", "b", "a", "b"])
     # one scatter collection per category, plus a legend
     assert len(axes.collections) == 2
@@ -60,12 +60,12 @@ def test_color_by_categorical_uses_set1_and_legend():
     assert len(colors) == 2
 
 
-def test_color_by_continuous_uses_viridis_and_colorbar():
+def test_color_by_continuous_uses_sequential_ramp_and_colorbar():
     rng = np.random.default_rng(0)
     x = rng.normal(size=30)
     y = rng.normal(size=30)
     values = rng.normal(size=30)
     axes = simple_scatter(x, y, color_by=values)
     assert len(axes.collections) == 1
-    assert axes.collections[0].get_cmap().name == "viridis"
+    assert axes.collections[0].get_cmap().name == "probably_retro"
     assert len(axes.figure.axes) == 2  # main axes + colorbar axes

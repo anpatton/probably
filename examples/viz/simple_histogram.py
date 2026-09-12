@@ -19,7 +19,7 @@ with data_path.open(newline="") as f:
 axes = simple_histogram(
     petal_lengths,
     bins=20,
-    xlabel="petal length (cm)",
+    xlabel="Petal Length (cm)",
     title="Iris petal length",
 )
 

@@ -7,7 +7,7 @@ import numpy as np
 from matplotlib.axes import Axes
 from scipy.stats import gaussian_kde
 
-from probably.viz._utils import apply_simple_style, coerce_to_1d_array
+from probably.viz._utils import DENSITY_COLORMAP, apply_simple_style, coerce_to_1d_array
 
 _GRID_SIZE = 100
 
@@ -60,7 +60,7 @@ def simple_kde_2d(
 
     _, axes = plt.subplots()
 
-    axes.contourf(x_grid, y_grid, density, cmap="Blues")
+    axes.contourf(x_grid, y_grid, density, cmap=DENSITY_COLORMAP)
     apply_simple_style(axes)
 
     if xlabel is not None:

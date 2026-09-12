@@ -22,8 +22,8 @@ petal_width = [float(row["petal_width"]) for row in rows]
 axes = simple_kde_2d(
     petal_length,
     petal_width,
-    xlabel="petal length (cm)",
-    ylabel="petal width (cm)",
+    xlabel="Petal Length (cm)",
+    ylabel="Petal Width (cm)",
     title="Iris petal dimensions joint density",
 )
 

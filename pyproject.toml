@@ -67,8 +67,17 @@ max-complexity = 10
 python_version = "3.12"
 strict = true
 
+# scikit-learn ships no py.typed marker and has no maintained stub package,
+# so mypy cannot analyze it. Scoped to sklearn only; everything else stays strict.
+[[tool.mypy.overrides]]
+module = "sklearn.*"
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+# src is collected too so every public docstring's Examples block is executed,
+# not just the tests/ suite.
+testpaths = ["tests", "src"]
+addopts = "--doctest-modules"
 
 [tool.coverage.run]
 source = ["src/probably"]
