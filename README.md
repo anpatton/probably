@@ -44,6 +44,9 @@ class as they're added.
   distributions and Monte Carlo simulation workflows.
 - **scikit-learn compatible** — modeling-adjacent estimators/transformers follow sklearn's
   `BaseEstimator`/mixin conventions so they drop into existing sklearn pipelines.
+- **A bolt-on, not a replacement** — `probably` supplements scikit-learn, numpy, and scipy
+  with the specialized pieces they leave out. It never reimplements or "improves" what they
+  already provide; where they have the thing, use theirs.
 - **Minimal dependencies** — built on `numpy`, `scipy`, and `scikit-learn`; new dependencies
   are added only when necessary.
 - **Documented by example** — every public function/class ships with a runnable example.

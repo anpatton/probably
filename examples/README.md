@@ -2,6 +2,13 @@
 
 - [`dx/describe.py`](dx/describe.py) — `probably.dx.describe` at both depths.
 - [`dx/is_this_normal.py`](dx/is_this_normal.py) — `probably.dx.is_this_normal` on two samples.
+- [`dx/what_is_this.py`](dx/what_is_this.py) — `probably.dx.what_is_this` identifying a sample's
+  distribution, returning the fitted scipy object and the diagnostics behind it.
+- [`dx/is_this_different.py`](dx/is_this_different.py) — `probably.dx.is_this_different`
+  comparing two samples against one control.
+- [`predict/ProbablyConformalRegressor.py`](predict/ProbablyConformalRegressor.py) —
+  `probably.predict.ProbablyConformalRegressor` around a random forest, checking that the
+  intervals cover at the requested rate.
 - [`logo.py`](logo.py) — generates the project logo (`assets/logo.png`).
 - [`data/iris.csv`](data/iris.csv) — the classic iris dataset, used by every `viz/` example
   so they all plot the same, familiar data.
@@ -11,7 +18,8 @@
 - [`viz/simple_bar.py`](viz/simple_bar.py) — `probably.viz.simple_bar`.
 - [`viz/simple_kde.py`](viz/simple_kde.py) — `probably.viz.simple_kde`, pooled and by species.
 - [`viz/simple_kde_2d.py`](viz/simple_kde_2d.py) — `probably.viz.simple_kde_2d`.
-- [`viz/simple_ecdf.py`](viz/simple_ecdf.py) — `probably.viz.simple_ecdf`.
+- [`viz/simple_ecdf.py`](viz/simple_ecdf.py) — `probably.viz.simple_ecdf`, pooled and by
+  species.
 - [`viz/simple_qq_normal.py`](viz/simple_qq_normal.py) — `probably.viz.simple_qq_normal`.
 - [`viz/simple_pp_normal.py`](viz/simple_pp_normal.py) — `probably.viz.simple_pp_normal`.
 - [`viz/simple_roc.py`](viz/simple_roc.py) — `probably.viz.simple_roc`, one model and two.

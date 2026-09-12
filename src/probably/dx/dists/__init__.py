@@ -6,6 +6,7 @@ from probably.dx.dists.is_this_gamma import is_this_gamma
 from probably.dx.dists.is_this_lognormal import is_this_lognormal
 from probably.dx.dists.is_this_normal import is_this_normal
 from probably.dx.dists.is_this_uniform import is_this_uniform
+from probably.dx.dists.what_is_this import what_is_this
 
 __all__ = [
     "is_this_beta",
@@ -14,4 +15,5 @@ __all__ = [
     "is_this_lognormal",
     "is_this_normal",
     "is_this_uniform",
+    "what_is_this",
 ]

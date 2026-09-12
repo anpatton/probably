@@ -73,6 +73,13 @@ strict = true
 module = "sklearn.*"
 ignore_missing_imports = true
 
+# Probably* estimators subclass BaseEstimator and the sklearn mixins, which
+# mypy sees as Any for the reason above. Allow that in the one package that
+# defines them; everything else still forbids subclassing Any.
+[[tool.mypy.overrides]]
+module = "probably.predict.*"
+disallow_subclassing_any = false
+
 [tool.pytest.ini_options]
 # src is collected too so every public docstring's Examples block is executed,
 # not just the tests/ suite.
