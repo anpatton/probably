@@ -8,7 +8,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy import stats
 
-from probably._coerce import coerce_to_1d_array
+from probably._coerce import clean_vector
 
 # A goodness-of-fit test whose parameters were estimated from the same data
 # has no analytic null, so the null is simulated. More samples buy p-value
@@ -104,11 +104,7 @@ def run_battery(
 
     records = []
     for name, item in labelled_inputs(x):
-        values = coerce_to_1d_array(item, name=name)
-        if values.size == 0:
-            raise ValueError(f"{name} must have at least 1 value, got an empty vector")
-        if not np.all(np.isfinite(values)):
-            raise ValueError(f"{name} must be all finite values")
+        values = clean_vector(item, name=name)
         if prepare is not None:
             values = prepare(values, name)
 

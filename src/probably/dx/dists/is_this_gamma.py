@@ -20,10 +20,6 @@ GAMMA_BATTERY: TestBattery = {
 def is_this_gamma(*x: Any, alpha: float = 0.05) -> list[dict[str, Any]]:
     """Test one or more vectors for a gamma fit: yes, no, or maybe.
 
-    Slower than the other checks, for the same reason as
-    :func:`is_this_beta` -- the simulated null refits the distribution for
-    every resample.
-
     Parameters
     ----------
     *x : array-like
@@ -32,10 +28,12 @@ def is_this_gamma(*x: Any, alpha: float = 0.05) -> list[dict[str, Any]]:
     alpha : float, default 0.05
         Significance level each test is judged against.
 
+
     Returns
     -------
     list[dict]
         One record per vector, shaped exactly like :func:`is_this_normal`'s.
+
 
     Examples
     --------

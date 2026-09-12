@@ -20,10 +20,6 @@ BETA_BATTERY: TestBattery = {
 def is_this_beta(*x: Any, alpha: float = 0.05) -> list[dict[str, Any]]:
     """Test one or more vectors for a beta fit: yes, no, or maybe.
 
-    Slower than the other checks -- a beta has no closed-form fit, so the
-    simulated null refits one for every resample. Expect seconds, not
-    milliseconds.
-
     Parameters
     ----------
     *x : array-like
@@ -33,10 +29,12 @@ def is_this_beta(*x: Any, alpha: float = 0.05) -> list[dict[str, Any]]:
     alpha : float, default 0.05
         Significance level each test is judged against.
 
+
     Returns
     -------
     list[dict]
         One record per vector, shaped exactly like :func:`is_this_normal`'s.
+
 
     Examples
     --------

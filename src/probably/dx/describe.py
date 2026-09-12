@@ -6,7 +6,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.stats import kurtosis, skew
 
-from probably._coerce import coerce_to_1d_array
+from probably._coerce import clean_vector
 
 # Layer 1 answers "where is it and how wide is it"; layer 2 answers "what
 # shape is it". Splitting them keeps the common call short without hiding
@@ -53,9 +53,6 @@ def _layer_2(values: NDArray[np.floating[Any]], layer_1: dict[str, float]) -> di
 def describe(x: Any, depth: Literal[1, 2] = 1) -> dict[str, float]:
     """Summarize a single vector as a dictionary of statistics.
 
-    Returns data rather than a rendered table, so the result can be sorted,
-    filtered, compared, or loaded straight into a ``DataFrame``.
-
     Parameters
     ----------
     x : array-like
@@ -88,11 +85,7 @@ def describe(x: Any, depth: Literal[1, 2] = 1) -> dict[str, float]:
     if depth not in (1, 2):
         raise ValueError(f"depth must be 1 or 2, got {depth!r}")
 
-    values = coerce_to_1d_array(x)
-    if values.size == 0:
-        raise ValueError("x must have at least 1 value, got an empty vector")
-    if not np.all(np.isfinite(values)):
-        raise ValueError("x must be all finite values")
+    values = clean_vector(x)
 
     summary = _layer_1(values)
     if depth == 2:

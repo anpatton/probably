@@ -27,9 +27,6 @@ def simple_bar(
 ) -> Axes:
     """Plot a horizontal bar chart of category values.
 
-    Bars are horizontal (rather than vertical) so they are never confused
-    with a histogram, and are sorted with the largest value at the top.
-
     Parameters
     ----------
     categories : array-like
@@ -47,10 +44,12 @@ def simple_bar(
         Write the figure to this path. Must end in ``.png``, ``.jpg``, or
         ``.jpeg``. The axes are returned either way.
 
+
     Returns
     -------
     matplotlib.axes.Axes
         The axes the bar chart was drawn on.
+
 
     Examples
     --------
