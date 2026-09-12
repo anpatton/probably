@@ -12,7 +12,6 @@ from probably.viz._utils import (
     BACKGROUND_COLOR,
     apply_simple_style,
     check_image_path,
-    coerce_to_1d_array,
     resolve_color,
     save_figure,
 )
@@ -25,10 +24,6 @@ def simple_qq_normal(
     filepath: str | Path | None = None,
 ) -> Axes:
     """Plot sample quantiles against the quantiles of a fitted normal.
-
-    Points falling along the black 1:1 line mean the values are close to
-    normal; a curve, an S-shape, or drifting tails mean they are not. The
-    normal is fitted to the data, so no reference parameters are needed.
 
     Parameters
     ----------
@@ -44,10 +39,12 @@ def simple_qq_normal(
         Write the figure to this path. Must end in ``.png``, ``.jpg``, or
         ``.jpeg``. The axes are returned either way.
 
+
     Returns
     -------
     matplotlib.axes.Axes
         The axes the quantiles were drawn on.
+
 
     Examples
     --------
@@ -56,7 +53,7 @@ def simple_qq_normal(
     """
     path = check_image_path(filepath)
     point_color = resolve_color(color)
-    observed = sorted_values(coerce_to_1d_array(x))
+    observed = sorted_values(x)
 
     theoretical = norm.ppf(plotting_positions(observed.size), observed.mean(), observed.std(ddof=1))
 

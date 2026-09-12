@@ -5,6 +5,8 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
+from probably._coerce import clean_vector
+
 # Blom's plotting positions. Subtracting 3/8 keeps the extreme points off 0 and
 # 1, where a normal quantile is infinite and the plot would have nothing to draw.
 _PLOTTING_OFFSET = 0.375
@@ -15,19 +17,15 @@ _PLOTTING_OFFSET = 0.375
 REFERENCE_COLOR = "black"
 
 
-def sorted_values(x: NDArray[np.floating[Any]], name: str = "x") -> NDArray[np.floating[Any]]:
-    """Sort a vector ascending, rejecting one too short to diagnose.
+def sorted_values(x: Any, name: str = "x") -> NDArray[np.floating[Any]]:
+    """Coerce a vector and sort it ascending, rejecting one too short to diagnose.
 
     Examples
     --------
-    >>> sorted_values(np.array([3.0, 1.0, 2.0]))
+    >>> sorted_values([3.0, 1.0, 2.0])
     array([1., 2., 3.])
     """
-    if x.size < 2:
-        raise ValueError(f"{name} must have at least 2 values, got {x.size}")
-    if not np.all(np.isfinite(x)):
-        raise ValueError(f"{name} must be all finite values")
-    return np.sort(x)
+    return np.sort(clean_vector(x, name=name, minimum=2))
 
 
 def plotting_positions(n: int) -> NDArray[np.floating[Any]]:

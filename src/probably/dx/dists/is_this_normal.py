@@ -46,11 +46,6 @@ NORMAL_BATTERY: TestBattery = {
 def is_this_normal(*x: Any, alpha: float = 0.05) -> list[dict[str, Any]]:
     """Test one or more vectors for normality and answer yes, no, or maybe.
 
-    Runs four normality tests per vector and reduces them to a single
-    verdict. "maybe" is a real answer here, not a hedge: it is what the data
-    supports when the tests disagree, or when the sample is too small for
-    "nothing rejected" to mean anything.
-
     Parameters
     ----------
     *x : array-like
@@ -63,11 +58,9 @@ def is_this_normal(*x: Any, alpha: float = 0.05) -> list[dict[str, Any]]:
     Returns
     -------
     list[dict]
-        One record per vector: its ``name``, ``distribution``, ``n``, a
-        ``statistic`` and ``pvalue`` for each test, the ``alpha`` used, and
-        the ``verdict`` ("yes", "no", or "maybe") with a plain-English
-        ``reason``. A record list, so it loads straight into a
-        ``DataFrame``.
+        One record per vector, holding ``name``, ``distribution``, ``n``, a
+        ``statistic`` and ``pvalue`` per test, ``alpha``, ``verdict``, and
+        ``reason``.
 
     Examples
     --------

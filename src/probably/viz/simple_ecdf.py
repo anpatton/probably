@@ -37,14 +37,6 @@ def simple_ecdf(
 ) -> Axes:
     """Plot the empirical cumulative distribution of one or more vectors.
 
-    Every observation is shown as one step, so unlike a histogram or a
-    density there is nothing to smooth and no bin width to choose -- the
-    chart is the data. Read a quantile off the vertical axis.
-
-    Passing several series overlays one curve each, which is the clearest
-    picture of how two distributions differ: the widest vertical gap between
-    two curves is exactly what a Kolmogorov-Smirnov test measures.
-
     Parameters
     ----------
     x : array-like or mapping

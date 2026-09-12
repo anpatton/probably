@@ -16,11 +16,6 @@ def _log_of_positive(values: NDArray[np.floating[Any]], name: str) -> NDArray[np
 def is_this_lognormal(*x: Any, alpha: float = 0.05) -> list[dict[str, Any]]:
     """Test one or more vectors for lognormality and answer yes, no, or maybe.
 
-    A vector is lognormal exactly when its logarithm is normal, so this takes
-    the log and runs the same four tests as :func:`is_this_normal`. That is
-    both the standard approach and the strongest one available -- it inherits
-    Shapiro-Wilk's power instead of falling back to a simulated null.
-
     Parameters
     ----------
     *x : array-like
@@ -29,12 +24,13 @@ def is_this_lognormal(*x: Any, alpha: float = 0.05) -> list[dict[str, Any]]:
     alpha : float, default 0.05
         Significance level each test is judged against.
 
+
     Returns
     -------
     list[dict]
-        One record per vector, shaped exactly like :func:`is_this_normal`'s.
-        The test statistics describe the logged values, which is what was
-        actually tested.
+        One record per vector, shaped like :func:`is_this_normal`'s. The
+        statistics describe the logged values.
+
 
     Examples
     --------

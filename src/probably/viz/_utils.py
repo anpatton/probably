@@ -17,6 +17,7 @@ from numpy.typing import NDArray
 # Re-exported so every simple_* chart keeps importing its coercion from one
 # place; it lives at package level because probably.dx needs it too.
 from probably._coerce import coerce_to_1d_array as coerce_to_1d_array
+from probably._coerce import holds_sub_vectors
 
 # Warm parchment ground, dark ink, and a muted rule color -- the base of the
 # lightly retro look every simple_* chart shares.
@@ -175,12 +176,6 @@ def _strip_trailing_zeros(text: str) -> str:
 def format_number(value: Any, digits: int = SIGNIFICANT_DIGITS) -> str:
     """Round a number for display: few digits, no noise, nothing misleading.
 
-    Rounds to ``digits`` significant figures and drops trailing zeros, but
-    leaves an exact integer exact -- rounding a count to 3 figures would
-    turn 1765 into 1770, which is wrong for something that was counted.
-    Magnitudes too small or large to write plainly fall back to scientific
-    notation.
-
     Examples
     --------
     >>> [format_number(v) for v in (3.7580001, 0.03374892, 1765.4321)]
@@ -215,9 +210,6 @@ def format_number(value: Any, digits: int = SIGNIFICANT_DIGITS) -> str:
 
 def format_tick(value: float, _position: Any = None) -> str:
     """Format an axis tick, abbreviating large numbers as 1.2k / 3.4M / 1.1B.
-
-    Formatting every tick in full also drops matplotlib's shared "1e6" offset
-    label, which otherwise floats in the corner of the axes.
 
     Examples
     --------
@@ -266,9 +258,6 @@ def apply_legend_style(legend: Legend) -> None:
 def coerce_to_1d_list(x: Any, name: str = "x") -> list[Any]:
     """Coerce an array-like input of labels to a plain list.
 
-    Like :func:`coerce_to_1d_array`, but for non-numeric vectors (e.g. bar
-    chart category labels) where forcing a float dtype would fail.
-
     Examples
     --------
     >>> coerce_to_1d_list(["a", "b", "c"])
@@ -280,23 +269,8 @@ def coerce_to_1d_list(x: Any, name: str = "x") -> list[Any]:
     return values
 
 
-def _is_nested(x: Any) -> bool:
-    """Is this input a sequence of sub-sequences rather than a flat vector?"""
-    try:
-        first = next(iter(x))
-    except (TypeError, StopIteration):
-        return False
-    return not isinstance(first, (str, bytes)) and hasattr(first, "__len__")
-
-
 def split_labelled_items(x: Any) -> list[tuple[str | None, Any]]:
     """Split an input into labelled sub-items, or one unlabelled item.
-
-    This carries the labelling half of the multi-series convention, shared by
-    every ``simple_*`` chart that accepts several series. A mapping takes its
-    labels from the keys; any other nested input -- a list of lists, a 2-D
-    array -- is labelled by position; anything else is a single unlabelled
-    item.
 
     Examples
     --------
@@ -310,7 +284,7 @@ def split_labelled_items(x: Any) -> list[tuple[str | None, Any]]:
     if isinstance(x, Mapping):
         return [(str(key), value) for key, value in x.items()]
 
-    if _is_nested(x):
+    if holds_sub_vectors(x):
         return [(f"Series {index + 1}", item) for index, item in enumerate(x)]
 
     return [(None, x)]
@@ -318,11 +292,6 @@ def split_labelled_items(x: Any) -> list[tuple[str | None, Any]]:
 
 def coerce_to_series(x: Any, name: str = "x") -> list[tuple[str | None, NDArray[np.floating[Any]]]]:
     """Coerce an input into one or more labelled series of values.
-
-    This is the standard way ``simple_*`` charts accept multiple series: a
-    flat vector is one unlabelled series, while an input holding several
-    sub-items becomes one series each, labelled by
-    :func:`split_labelled_items`. Sub-items may differ in length.
 
     Examples
     --------
@@ -341,10 +310,6 @@ def coerce_to_series(x: Any, name: str = "x") -> list[tuple[str | None, NDArray[
 
 def coerce_binary_labels(y: Any, name: str = "y") -> tuple[NDArray[Any], Any, Any]:
     """Coerce an array-like of binary labels to an array plus its two classes.
-
-    The lower of the two distinct labels is treated as the negative class and
-    the higher as the positive class, so ``0``/``1``, ``False``/``True``, and
-    ``"no"``/``"yes"`` all work without configuration.
 
     Examples
     --------

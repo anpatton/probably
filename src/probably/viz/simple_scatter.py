@@ -160,14 +160,12 @@ def simple_scatter(
         Single vectors of equal length, e.g. a ``list``, ``numpy.ndarray``,
         ``pandas.Series``, or ``polars.Series``.
     line : {"ab", "lm", "loess"}, optional
-        Reference line to draw in black: ``"ab"`` for a 1:1 line, ``"lm"``
-        for an ordinary least squares fit, or ``"loess"`` for a locally
-        weighted smooth. The line type is noted in a caption below the plot.
+        Reference line to draw in black: 1:1, ordinary least squares, or a
+        locally weighted smooth. Noted in a caption below the plot.
     color_by : array-like, optional
-        A vector, the same length as ``x`` and ``y``, used to color each
-        point. Categorical values are colored with the package's muted
-        retro palette (with a legend); numeric values are colored with its
-        warm sequential ramp (with a colorbar). Colors are not configurable.
+        A vector the same length as ``x`` and ``y``, used to color each
+        point. Categorical values get the categorical palette and a legend;
+        numeric values get the sequential ramp and a colorbar.
     xlabel : str, optional
         Label for the x-axis.
     ylabel : str, optional

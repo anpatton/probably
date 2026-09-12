@@ -15,15 +15,6 @@ from sklearn.utils.validation import check_is_fitted, validate_data
 class ProbablyConformalRegressor(MetaEstimatorMixin, RegressorMixin, BaseEstimator):
     """Wrap a regressor so every prediction comes with an interval that holds.
 
-    Split conformal prediction: part of the training data is held out, the
-    wrapped model's errors on it are measured, and the interval half-width
-    is the ``coverage`` quantile of those errors. If new data looks like the
-    held-out data, the interval contains the true value at least ``coverage``
-    of the time -- with no assumptions about the model or the noise.
-
-    The interval is the same width for every row. That is the trade for the
-    guarantee coming from a single number.
-
     Parameters
     ----------
     estimator : scikit-learn regressor, optional
@@ -37,12 +28,14 @@ class ProbablyConformalRegressor(MetaEstimatorMixin, RegressorMixin, BaseEstimat
     random_state : int, optional
         Seed for the split, so results repeat.
 
+
     Attributes
     ----------
     estimator_ : scikit-learn regressor
         The fitted copy of ``estimator``.
     quantile_ : float
         The interval half-width: every interval is ``prediction ± quantile_``.
+
 
     Examples
     --------

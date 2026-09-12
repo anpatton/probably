@@ -14,11 +14,6 @@ _OVERLAP_GRID_POINTS = 400
 def overlap(reference: NDArray[np.floating[Any]], other: NDArray[np.floating[Any]]) -> float:
     """Share of density the two samples have in common, from 0 to 1.
 
-    The overlapping coefficient: the area under whichever density curve is
-    lower at each point. 1 means the two are indistinguishable, 0 that they
-    occupy separate ranges entirely. Unlike a p-value it does not grow more
-    impressive with sample size -- it answers "how far apart", not "how sure".
-
     Examples
     --------
     >>> import numpy as np
@@ -48,11 +43,6 @@ def overlap(reference: NDArray[np.floating[Any]], other: NDArray[np.floating[Any
 def prob_greater(reference: NDArray[np.floating[Any]], other: NDArray[np.floating[Any]]) -> float:
     """Chance a value drawn from `other` exceeds one drawn from `reference`.
 
-    The common-language effect size: 0.5 means the two are interchangeable,
-    0.8 means four times out of five a draw from `other` wins. This is the
-    Mann-Whitney U statistic divided by the number of pairs, so it costs
-    nothing beyond the test already being run.
-
     Examples
     --------
     >>> import numpy as np
@@ -68,13 +58,6 @@ def prob_greater(reference: NDArray[np.floating[Any]], other: NDArray[np.floatin
 
 def verdict_for_difference(pvalues: list[float], smallest_n: int, alpha: float) -> tuple[str, str]:
     """Turn a battery of two-sample p-values into a yes/no/maybe plus its reason.
-
-    The mirror image of
-    :func:`probably.dx.dists._engine.verdict_for`, and deliberately not a reuse
-    of it. There the null is "this matches the family", so nothing rejecting
-    means yes. Here the null is "these two are the same", so rejecting is what
-    means yes -- they differ. The two rules point in opposite directions and
-    sharing one would silently invert the answer.
 
     Examples
     --------

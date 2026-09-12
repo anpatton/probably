@@ -36,10 +36,6 @@ def simple_2x2(
 ) -> Axes:
     """Plot a 2x2 confusion matrix for a binary classifier.
 
-    Rows are the actual class and columns the predicted class, with each
-    quadrant labelled TN, FP, FN, or TP. Cells are left neutral so the
-    counts themselves carry the chart.
-
     Parameters
     ----------
     y_true : array-like
@@ -54,10 +50,12 @@ def simple_2x2(
         Write the figure to this path. Must end in ``.png``, ``.jpg``, or
         ``.jpeg``. The axes are returned either way.
 
+
     Returns
     -------
     matplotlib.axes.Axes
         The axes the confusion matrix was drawn on.
+
 
     Examples
     --------
