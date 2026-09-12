@@ -1,30 +1,22 @@
-"""Demonstrate `probably.viz.simple_histogram` on the iris dataset.
-
-Run with:
-
-    python examples/viz/simple_histogram.py
-
-Writes examples/assets/simple_histogram.png.
-"""
-
-import csv
 from pathlib import Path
+
+import numpy as np
 
 from probably.viz import simple_histogram
 
-data_path = Path(__file__).parent.parent / "data" / "iris.csv"
-with data_path.open(newline="") as f:
-    petal_lengths = [float(row["petal_length"]) for row in csv.DictReader(f)]
+iris = np.genfromtxt(
+    Path(__file__).parent.parent / "data" / "iris.csv",
+    delimiter=",",
+    names=True,
+    dtype=None,
+    encoding="utf-8",
+)
+assets = Path(__file__).parent.parent / "assets"
 
-output_path = Path(__file__).parent.parent / "assets" / "simple_histogram.png"
-output_path.parent.mkdir(parents=True, exist_ok=True)
-
-axes = simple_histogram(
-    petal_lengths,
+simple_histogram(
+    iris["petal_length"],
     bins=20,
     xlabel="Petal Length (cm)",
     title="Iris petal length",
-    filepath=output_path,
+    filepath=assets / "simple_histogram.png",
 )
-
-print(f"wrote {output_path}")

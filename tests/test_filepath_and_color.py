@@ -6,9 +6,12 @@ from matplotlib.axes import Axes
 from probably.viz import (
     simple_2x2,
     simple_bar,
+    simple_ecdf,
     simple_histogram,
     simple_kde,
     simple_kde_2d,
+    simple_pp_normal,
+    simple_qq_normal,
     simple_roc,
     simple_scatter,
 )
@@ -30,6 +33,9 @@ def _call(func, filepath=None):
         simple_scatter: lambda: simple_scatter(x, y, filepath=filepath),
         simple_roc: lambda: simple_roc([0, 0, 1, 1], [0.1, 0.4, 0.35, 0.8], filepath=filepath),
         simple_2x2: lambda: simple_2x2([0, 0, 1, 1], [0, 1, 1, 1], filepath=filepath),
+        simple_qq_normal: lambda: simple_qq_normal(x, filepath=filepath),
+        simple_pp_normal: lambda: simple_pp_normal(x, filepath=filepath),
+        simple_ecdf: lambda: simple_ecdf(x, filepath=filepath),
     }
     return calls[func]()
 
@@ -42,6 +48,9 @@ ALL_CHARTS = [
     simple_scatter,
     simple_roc,
     simple_2x2,
+    simple_qq_normal,
+    simple_pp_normal,
+    simple_ecdf,
 ]
 
 
@@ -128,10 +137,39 @@ def test_single_series_charts_default_to_different_colors():
     assert kde_2d.collections[0].get_cmap() is DENSITY_COLORMAPS["y"]
 
 
+@pytest.mark.parametrize("func", [simple_qq_normal, simple_pp_normal])
+@pytest.mark.parametrize("flag", ["r", "y", "b"])
+def test_diagnostic_scatter_color_flag(func, flag):
+    axes = func(np.random.default_rng(0).normal(size=40), color=flag)
+    assert axes.collections[0].get_facecolor()[0] == pytest.approx(
+        matplotlib.colors.to_rgba(SERIES_COLORS[flag], alpha=0.85)
+    )
+
+
+@pytest.mark.parametrize("flag", ["r", "y", "b"])
+def test_ecdf_color_flag(flag):
+    axes = simple_ecdf([1.0, 2.0, 3.0], color=flag)
+    assert axes.lines[0].get_color() == SERIES_COLORS[flag]
+
+
+def test_diagnostic_charts_default_to_different_colors():
+    values = np.random.default_rng(0).normal(size=40)
+    assert simple_qq_normal(values).collections[0].get_facecolor()[0] == pytest.approx(
+        matplotlib.colors.to_rgba(SERIES_COLORS["r"], alpha=0.85)
+    )
+    assert simple_pp_normal(values).collections[0].get_facecolor()[0] == pytest.approx(
+        matplotlib.colors.to_rgba(SERIES_COLORS["b"], alpha=0.85)
+    )
+    assert simple_ecdf(values).lines[0].get_color() == SERIES_COLORS["y"]
+
+
 def test_rejects_unknown_color():
     rng = np.random.default_rng(0)
     with pytest.raises(ValueError, match="color must be one of"):
         simple_histogram([1.0, 2.0, 3.0], color="green")
+    for func in (simple_qq_normal, simple_pp_normal, simple_ecdf):
+        with pytest.raises(ValueError, match="color must be one of"):
+            func([1.0, 2.0, 3.0], color="green")
     with pytest.raises(ValueError, match="color must be one of"):
         simple_bar(["a", "b"], [3, 1], color="green")
     with pytest.raises(ValueError, match="color must be one of"):

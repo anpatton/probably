@@ -2,7 +2,7 @@ from pathlib import Path
 
 import numpy as np
 
-from probably.viz import simple_kde_2d
+from probably.viz import simple_qq_normal
 
 iris = np.genfromtxt(
     Path(__file__).parent.parent / "data" / "iris.csv",
@@ -13,11 +13,8 @@ iris = np.genfromtxt(
 )
 assets = Path(__file__).parent.parent / "assets"
 
-simple_kde_2d(
-    iris["petal_length"],
-    iris["petal_width"],
-    xlabel="Petal Length (cm)",
-    ylabel="Petal Width (cm)",
-    title="Iris petal length and width",
-    filepath=assets / "simple_kde_2d.png",
+simple_qq_normal(
+    iris["sepal_width"],
+    title="Iris sepal width vs. a fitted normal",
+    filepath=assets / "simple_qq_normal.png",
 )

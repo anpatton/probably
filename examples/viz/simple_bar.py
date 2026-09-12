@@ -1,33 +1,24 @@
-"""Demonstrate `probably.viz.simple_bar` on the iris dataset.
-
-Run with:
-
-    python examples/viz/simple_bar.py
-
-Writes examples/assets/simple_bar.png.
-"""
-
-import csv
-from collections import Counter
 from pathlib import Path
+
+import numpy as np
 
 from probably.viz import simple_bar
 
-data_path = Path(__file__).parent.parent / "data" / "iris.csv"
-with data_path.open(newline="") as f:
-    species = [row["species"] for row in csv.DictReader(f)]
+iris = np.genfromtxt(
+    Path(__file__).parent.parent / "data" / "iris.csv",
+    delimiter=",",
+    names=True,
+    dtype=None,
+    encoding="utf-8",
+)
+assets = Path(__file__).parent.parent / "assets"
 
-counts = Counter(species)
+species, counts = np.unique(iris["species"], return_counts=True)
 
-output_path = Path(__file__).parent.parent / "assets" / "simple_bar.png"
-output_path.parent.mkdir(parents=True, exist_ok=True)
-
-axes = simple_bar(
-    list(counts.keys()),
-    list(counts.values()),
+simple_bar(
+    species,
+    counts,
     xlabel="Count",
     title="Iris species counts",
-    filepath=output_path,
+    filepath=assets / "simple_bar.png",
 )
-
-print(f"wrote {output_path}")

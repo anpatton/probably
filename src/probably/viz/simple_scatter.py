@@ -27,6 +27,10 @@ _LINE_COLOR = "black"
 _LOESS_FRAC = 0.3
 _LINE_NUM_POINTS = 200
 
+# Space reserved below the axes for the caption, and where it sits in it.
+_CAPTION_MARGIN = 0.2
+_CAPTION_Y = 0.02
+
 _LINE_CAPTIONS = {
     "ab": "Black line: 1:1 reference",
     "lm": "Black line: OLS fit",
@@ -118,6 +122,26 @@ def _scatter_colored_by(
     apply_legend_style(axes.legend())
 
 
+def _add_caption(axes: Axes, caption: str) -> None:
+    """Write the caption below the plot, clear of the x-axis label.
+
+    The axis label is drawn in figure coordinates that shift with the label
+    text, so the caption reserves its own strip of the figure rather than
+    guessing a position -- otherwise it lands on top of the label.
+    """
+    figure = axes.figure
+    figure.subplots_adjust(bottom=_CAPTION_MARGIN)
+    figure.text(
+        0.5,
+        _CAPTION_Y,
+        caption,
+        ha="center",
+        va="bottom",
+        fontsize=9,
+        color=INK_COLOR,
+    )
+
+
 def simple_scatter(
     x: Any,
     y: Any,
@@ -190,15 +214,6 @@ def simple_scatter(
     if line is not None:
         line_x, line_y = _LINE_FUNCS[line](x_values, y_values)
         axes.plot(line_x, line_y, color=_LINE_COLOR)
-        axes.figure.text(
-            0.5,
-            0.0,
-            _LINE_CAPTIONS[line],
-            ha="center",
-            va="bottom",
-            fontsize=9,
-            color=INK_COLOR,
-        )
 
     apply_simple_style(axes)
 
@@ -208,6 +223,9 @@ def simple_scatter(
         axes.set_ylabel(ylabel)
     if title is not None:
         axes.set_title(title)
+
+    if line is not None:
+        _add_caption(axes, _LINE_CAPTIONS[line])
 
     save_figure(axes, path)
 
