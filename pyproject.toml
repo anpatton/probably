@@ -39,6 +39,7 @@ dev = [
     "black",
     "build",
     "twine",
+    "scipy-stubs",
 ]
 
 [project.urls]
@@ -63,7 +64,7 @@ select = ["E", "F", "I", "UP", "B", "C901"]
 max-complexity = 10
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.12"
 strict = true
 
 [tool.pytest.ini_options]
