@@ -69,3 +69,19 @@ def test_color_by_continuous_uses_sequential_ramp_and_colorbar():
     assert len(axes.collections) == 1
     assert axes.collections[0].get_cmap().name == "probably_retro"
     assert len(axes.figure.axes) == 2  # main axes + colorbar axes
+
+
+def test_caption_sits_clear_of_the_x_axis_label():
+    # the caption used to be pinned to the figure bottom, landing on the label
+    rng = np.random.default_rng(0)
+    axes = simple_scatter(
+        rng.normal(size=30), rng.normal(size=30), line="lm", xlabel="Petal Length (cm)"
+    )
+    figure = axes.get_figure(root=True)
+    figure.canvas.draw()
+
+    captions = [t for t in figure.texts if "Black line" in t.get_text()]
+    assert len(captions) == 1
+    caption_top = captions[0].get_window_extent().y1
+    label_bottom = axes.xaxis.label.get_window_extent().y0
+    assert caption_top < label_bottom

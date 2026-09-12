@@ -1,37 +1,25 @@
-"""Demonstrate `probably.viz.simple_scatter` on the iris dataset.
-
-Run with:
-
-    python examples/viz/simple_scatter.py
-
-Writes examples/assets/simple_scatter.png.
-"""
-
-import csv
 from pathlib import Path
+
+import numpy as np
 
 from probably.viz import simple_scatter
 
-data_path = Path(__file__).parent.parent / "data" / "iris.csv"
-with data_path.open(newline="") as f:
-    rows = list(csv.DictReader(f))
+iris = np.genfromtxt(
+    Path(__file__).parent.parent / "data" / "iris.csv",
+    delimiter=",",
+    names=True,
+    dtype=None,
+    encoding="utf-8",
+)
+assets = Path(__file__).parent.parent / "assets"
 
-petal_length = [float(row["petal_length"]) for row in rows]
-petal_width = [float(row["petal_width"]) for row in rows]
-species = [row["species"] for row in rows]
-
-output_path = Path(__file__).parent.parent / "assets" / "simple_scatter.png"
-output_path.parent.mkdir(parents=True, exist_ok=True)
-
-axes = simple_scatter(
-    petal_length,
-    petal_width,
+simple_scatter(
+    iris["petal_length"],
+    iris["petal_width"],
     line="lm",
-    color_by=species,
+    color_by=iris["species"],
     xlabel="Petal Length (cm)",
     ylabel="Petal Width (cm)",
-    title="Iris petal dimensions",
-    filepath=output_path,
+    title="Iris petal length vs. width",
+    filepath=assets / "simple_scatter.png",
 )
-
-print(f"wrote {output_path}")

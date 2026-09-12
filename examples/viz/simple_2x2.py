@@ -1,42 +1,33 @@
-"""Demonstrate `probably.viz.simple_2x2` on the iris dataset.
-
-Trains a logistic regression to separate virginica from the other two
-species, then plots the confusion matrix of its held-out predictions.
-
-Run with:
-
-    python examples/viz/simple_2x2.py
-
-Writes examples/assets/simple_2x2.png.
-"""
-
-import csv
 from pathlib import Path
 
+import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
 from probably.viz import simple_2x2
 
-data_path = Path(__file__).parent.parent / "data" / "iris.csv"
-with data_path.open(newline="") as f:
-    rows = list(csv.DictReader(f))
+iris = np.genfromtxt(
+    Path(__file__).parent.parent / "data" / "iris.csv",
+    delimiter=",",
+    names=True,
+    dtype=None,
+    encoding="utf-8",
+)
+assets = Path(__file__).parent.parent / "assets"
 
-features = [
-    [float(row[name]) for name in ("sepal_length", "sepal_width", "petal_length", "petal_width")]
-    for row in rows
-]
-is_virginica = [int(row["species"] == "virginica") for row in rows]
+features = np.column_stack(
+    [iris["sepal_length"], iris["sepal_width"], iris["petal_length"], iris["petal_width"]]
+)
+is_virginica = (iris["species"] == "virginica").astype(int)
 
 x_train, x_test, y_train, y_test = train_test_split(
     features, is_virginica, test_size=0.4, random_state=0, stratify=is_virginica
 )
 model = LogisticRegression(max_iter=1000).fit(x_train, y_train)
-predictions = model.predict(x_test)
 
-output_path = Path(__file__).parent.parent / "assets" / "simple_2x2.png"
-output_path.parent.mkdir(parents=True, exist_ok=True)
-
-axes = simple_2x2(y_test, predictions, title="Virginica vs. rest", filepath=output_path)
-
-print(f"wrote {output_path}")
+simple_2x2(
+    y_test,
+    model.predict(x_test),
+    title="Virginica vs. rest",
+    filepath=assets / "simple_2x2.png",
+)

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import numpy as np
 
-from probably.viz import simple_kde
+from probably.viz import simple_ecdf
 
 iris = np.genfromtxt(
     Path(__file__).parent.parent / "data" / "iris.csv",
@@ -17,16 +17,16 @@ by_species = {
     name: iris["petal_length"][iris["species"] == name] for name in np.unique(iris["species"])
 }
 
-simple_kde(
+simple_ecdf(
     iris["petal_length"],
     xlabel="Petal Length (cm)",
-    title="Iris petal length density",
-    filepath=assets / "simple_kde.png",
+    title="Iris petal length",
+    filepath=assets / "simple_ecdf.png",
 )
 
-simple_kde(
+simple_ecdf(
     by_species,
     xlabel="Petal Length (cm)",
-    title="Iris petal length density by species",
-    filepath=assets / "simple_kde_grouped.png",
+    title="Iris petal length by species",
+    filepath=assets / "simple_ecdf_grouped.png",
 )

@@ -14,6 +14,10 @@ from matplotlib.legend import Legend
 from matplotlib.ticker import FixedFormatter, FixedLocator, FuncFormatter
 from numpy.typing import NDArray
 
+# Re-exported so every simple_* chart keeps importing its coercion from one
+# place; it lives at package level because probably.dx needs it too.
+from probably._coerce import coerce_to_1d_array as coerce_to_1d_array
+
 # Warm parchment ground, dark ink, and a muted rule color -- the base of the
 # lightly retro look every simple_* chart shares.
 BACKGROUND_COLOR = "#FAF4E8"
@@ -257,23 +261,6 @@ def apply_legend_style(legend: Legend) -> None:
     legend.get_frame().set_edgecolor(MUTED_COLOR)
     for text in legend.get_texts():
         text.set_color(INK_COLOR)
-
-
-def coerce_to_1d_array(x: Any, name: str = "x") -> NDArray[np.floating[Any]]:
-    """Coerce an array-like input to a 1-D numpy float array.
-
-    Accepts anything numpy can convert via ``np.asarray`` -- a ``list``,
-    ``numpy.ndarray``, ``pandas.Series``, ``polars.Series``, etc.
-
-    Examples
-    --------
-    >>> coerce_to_1d_array([1, 2, 3])
-    array([1., 2., 3.])
-    """
-    arr = np.asarray(x, dtype=float)
-    if arr.ndim != 1:
-        raise ValueError(f"{name} must be a single (1-D) vector, got shape {arr.shape}")
-    return arr
 
 
 def coerce_to_1d_list(x: Any, name: str = "x") -> list[Any]:
