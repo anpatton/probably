@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="examples/assets/logo.png" alt="probably logo" width="160">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="examples/assets/logo-dark.png">
+    <img src="examples/assets/logo.png" alt="probably logo" width="320">
+  </picture>
 </p>
 
 # probably
