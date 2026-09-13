@@ -42,6 +42,7 @@ distributions and Monte Carlo simulation. Compatible with scikit-learn. All agen
 Run these inside the `probably` conda environment (`conda activate probably`):
 
 - Install editable: `pip install -e ".[dev]"`
-- Run tests: `pytest`
+- Run tests: `pytest` (the slowest Monte Carlo goodness-of-fit tests are skipped by
+  default; add `--runslow` to include them, as CI does)
 - Lint: `ruff check .`
 - Type check: `mypy src`

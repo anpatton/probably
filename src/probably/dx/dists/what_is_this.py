@@ -1,14 +1,18 @@
 """Identify which distribution a vector came from."""
 
 import warnings
-from typing import Any, NamedTuple
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
 
 from probably._coerce import clean_vector
-from probably.dx.dists._engine import verdict_for
-from probably.dx.dists._families import FAMILIES, FAMILIES_BY_NAME, LOG_FAMILIES
+from probably.dx.dists._families import (
+    FAMILIES,
+    FAMILIES_BY_NAME,
+    Identification,
+    check_fit,
+)
 
 # How many candidates come back. Each one is fitted, tested, and reported --
 # past the first few the families are too far behind to be worth reading.
@@ -17,13 +21,6 @@ TOP_N = 3
 # Two fits within this much AIC of each other are not meaningfully different.
 # Reported as `tied_with_best` so the reader need not know the rule.
 TIE_THRESHOLD = 2.0
-
-
-class Identification(NamedTuple):
-    """The distribution :func:`what_is_this` found, and the evidence for it."""
-
-    distribution: Any
-    diagnostics: list[dict[str, Any]]
 
 
 def what_is_this(x: Any, alpha: float = 0.05) -> Identification:
@@ -84,7 +81,7 @@ def what_is_this(x: Any, alpha: float = 0.05) -> Identification:
         record["fit_rank"] = position
         record["delta_aic"] = record["aic"] - best["aic"]
         record["tied_with_best"] = record["delta_aic"] < TIE_THRESHOLD
-        record["verdict"], note = _check(record["distribution"], values, alpha)
+        record["verdict"], note = check_fit(FAMILIES_BY_NAME[record["distribution"]], values, alpha)
         record["reason"] = _explain(record, len(fitted), best["distribution"], note)
 
     if best["verdict"] == "no":
@@ -146,23 +143,3 @@ def _explain(record: dict[str, Any], considered: int, best_name: str, note: str)
     else:
         fit = f"fits worse than {best_name} (AIC {record['delta_aic']:.1f} higher)"
     return f"{fit}; {note}"
-
-
-def _check(family_name: str, values: NDArray[np.floating[Any]], alpha: float) -> tuple[str, str]:
-    """Run one family's own battery and reduce it to a verdict.
-
-    The battery comes from the matching ``is_this_*`` module, so a verdict
-    here and a verdict there are the same judgement made by the same code.
-    """
-    family = FAMILIES_BY_NAME[family_name]
-    tested = np.log(values) if family.name in LOG_FAMILIES else values
-
-    pvalues = []
-    for test in family.battery.values():
-        try:
-            _, pvalue = test(tested)
-        except Exception:
-            pvalue = float("nan")
-        pvalues.append(pvalue)
-
-    return verdict_for(pvalues, len(values), alpha)

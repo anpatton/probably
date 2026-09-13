@@ -68,6 +68,25 @@ is_this_lognormal(yields)[0]["verdict"]   # 'yes'
 Every check answers `"yes"`, `"no"`, or `"maybe"`. Also available for `beta`, `gamma`,
 `exponential`, and `uniform`.
 
+### Fit a flexible family
+
+When no named family fits, two four-parameter families cover the whole real line with
+separate controls for skew and tail weight.
+
+```python
+from probably.dx import fit_johnsonsu, fit_shash
+
+distribution, diagnostics = fit_johnsonsu(returns)
+diagnostics[0]["verdict"]     # 'yes' — it was checked, not just fitted
+
+distribution, _ = fit_shash(returns, quick=True)   # fit only, ~500x faster
+```
+
+Both return a frozen scipy distribution. `quick=True` skips the goodness-of-fit check,
+which simulates its null and dominates the runtime — use it when fitting inside a
+resampling loop. `scipy` ships `johnsonsu`; sinh-arcsinh it does not, so `probably`
+defines it.
+
 ### Compare samples
 
 ```python
@@ -133,6 +152,7 @@ conda activate probably
 pip install -e ".[dev]"
 
 pytest              # tests, including doctests
+pytest --runslow    # also the Monte Carlo batteries, skipped by default
 ruff check .        # lint
 black --check .     # format
 mypy src            # type check
