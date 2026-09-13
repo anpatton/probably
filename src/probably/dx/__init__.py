@@ -3,6 +3,8 @@
 from probably.dx.compare import is_this_different
 from probably.dx.describe import describe
 from probably.dx.dists import (
+    fit_johnsonsu,
+    fit_shash,
     is_this_beta,
     is_this_exponential,
     is_this_gamma,
@@ -14,6 +16,8 @@ from probably.dx.dists import (
 
 __all__ = [
     "describe",
+    "fit_johnsonsu",
+    "fit_shash",
     "is_this_different",
     "is_this_beta",
     "is_this_exponential",

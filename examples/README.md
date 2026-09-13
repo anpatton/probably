@@ -4,6 +4,10 @@
 - [`dx/is_this_normal.py`](dx/is_this_normal.py) — `probably.dx.is_this_normal` on two samples.
 - [`dx/what_is_this.py`](dx/what_is_this.py) — `probably.dx.what_is_this` identifying a sample's
   distribution, returning the fitted scipy object and the diagnostics behind it.
+- [`dx/fit_johnsonsu.py`](dx/fit_johnsonsu.py) — `probably.dx.fit_johnsonsu` fitting a
+  flexible four-parameter family, checked and with `quick=True`.
+- [`dx/fit_shash.py`](dx/fit_shash.py) — `probably.dx.fit_shash`, the same for
+  sinh-arcsinh.
 - [`dx/is_this_different.py`](dx/is_this_different.py) — `probably.dx.is_this_different`
   comparing two samples against one control.
 - [`predict/ProbablyConformalRegressor.py`](predict/ProbablyConformalRegressor.py) —
